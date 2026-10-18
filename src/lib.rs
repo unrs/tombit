@@ -15,6 +15,10 @@ use tombi_lib::{ConfigInput, Options as TombiOptions};
 const OFFLINE_CONFIG: &str = "[schema]\nenabled = false\n";
 const OFFLINE_CONFIG_PATH: &str = "tombi.toml";
 
+/// Whether this build must force `schema.enabled = false` because it has no
+/// HTTP client to resolve a catalog with.
+const FORCED_OFFLINE: bool = cfg!(any(target_family = "wasm", not(feature = "schema")));
+
 /// The content of a `tombi.toml` config file at a given path.
 #[napi(object)]
 pub struct ConfigFile {
@@ -202,6 +206,33 @@ fn config_input(config: &Config, config_path: Option<PathBuf>) -> Result<ConfigI
 }
 
 fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
+    // Without an override there is nothing to merge, so hand tombi-lib the
+    // config directly instead of parsing it into `Config` and re-serializing it.
+    if options.override_config.is_none() {
+        match &options.config {
+            Some(Either3::A(false)) => {
+                let content = if FORCED_OFFLINE { OFFLINE_CONFIG } else { "" };
+                return Ok(TombiOptions {
+                    config: Some(ConfigInput::Text(content.to_owned())),
+                });
+            }
+            Some(Either3::B(content)) if !FORCED_OFFLINE => {
+                return Ok(TombiOptions {
+                    config: Some(ConfigInput::Text(content.clone())),
+                });
+            }
+            Some(Either3::C(file)) if !FORCED_OFFLINE => {
+                return Ok(TombiOptions {
+                    config: Some(ConfigInput::File {
+                        content: file.content.clone(),
+                        path: file.path.clone().into(),
+                    }),
+                });
+            }
+            _ => {}
+        }
+    }
+
     let (base, config_path) = base_config(source_path, options)?;
     let config = merge_override(base, options.override_config.clone())?;
     // WASI never resolves schemas, and a native build without the schema client
