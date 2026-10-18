@@ -1,0 +1,58 @@
+diff --git a/dist/emnapi-plugins.cjs b/dist/emnapi-plugins.cjs
+index 8d7a4b16ca46eed3da88cc32924ef9e0461a84b5..c7813dbcaf210883a02628b8cea7943accec5e95 100644
+--- a/dist/emnapi-plugins.cjs
++++ b/dist/emnapi-plugins.cjs
+@@ -603,7 +603,7 @@ function asyncWork(emnapiPluginCtx) {
+ 				const data = emnapiAWMT.getData(work);
+ 				emnapiPluginCtx.wasmTable.get(execute)(env, data);
+ 				Atomics.store(statusBuffer, 0, 2);
+-				const postMessage = emnapi_shared.napiModule.postMessage;
++				const postMessage = emnapi_shared.addonModule.postMessage;
+ 				postMessage({ __emnapi__: {
+ 					type: "async-work-complete",
+ 					payload: { work }
+@@ -658,13 +658,13 @@ function asyncWork(emnapiPluginCtx) {
+ 			return ret;
+ 		}
+ 		function initWorker(startArg, func) {
+-			if (emnapi_shared.napiModule.childThread) {
++			if (emnapi_shared.addonModule.childThread) {
+ 				if (typeof emscripten_runtime.wasmInstance.exports.emnapi_async_worker_init !== "function") throw new TypeError("`emnapi_async_worker_init` is not exported, please try to add `--export=emnapi_async_worker_init` to linker flags");
+ 				emscripten_runtime.wasmInstance.exports.emnapi_async_worker_init(startArg);
+ 				emnapiPluginCtx.wasmTable.get(func[0])(func[1]);
+ 			} else throw new Error("startThread is only available in child threads");
+ 		}
+-		emnapi_shared.napiModule.initWorker = initWorker;
++		emnapi_shared.addonModule.initWorker = initWorker;
+ 		exports._emnapi_async_worker = _emnapi_async_worker;
+ 		exports._emnapi_spawn_worker = _emnapi_spawn_worker;
+ 		exports.napi_cancel_async_work = napi_cancel_async_work;
+diff --git a/dist/emnapi-plugins.js b/dist/emnapi-plugins.js
+index 334bd26c10db18885b45176b2ec827ae8274462d..24424cc4d90d9025edcd3dbeef1a3ea65d09e9d8 100644
+--- a/dist/emnapi-plugins.js
++++ b/dist/emnapi-plugins.js
+@@ -602,7 +602,7 @@ function asyncWork(emnapiPluginCtx) {
+ 				const data = emnapiAWMT.getData(work);
+ 				emnapiPluginCtx.wasmTable.get(execute)(env, data);
+ 				Atomics.store(statusBuffer, 0, 2);
+-				const postMessage = emnapi_shared.napiModule.postMessage;
++				const postMessage = emnapi_shared.addonModule.postMessage;
+ 				postMessage({ __emnapi__: {
+ 					type: "async-work-complete",
+ 					payload: { work }
+@@ -657,13 +657,13 @@ function asyncWork(emnapiPluginCtx) {
+ 			return ret;
+ 		}
+ 		function initWorker(startArg, func) {
+-			if (emnapi_shared.napiModule.childThread) {
++			if (emnapi_shared.addonModule.childThread) {
+ 				if (typeof emscripten_runtime.wasmInstance.exports.emnapi_async_worker_init !== "function") throw new TypeError("`emnapi_async_worker_init` is not exported, please try to add `--export=emnapi_async_worker_init` to linker flags");
+ 				emscripten_runtime.wasmInstance.exports.emnapi_async_worker_init(startArg);
+ 				emnapiPluginCtx.wasmTable.get(func[0])(func[1]);
+ 			} else throw new Error("startThread is only available in child threads");
+ 		}
+-		emnapi_shared.napiModule.initWorker = initWorker;
++		emnapi_shared.addonModule.initWorker = initWorker;
+ 		exports._emnapi_async_worker = _emnapi_async_worker;
+ 		exports._emnapi_spawn_worker = _emnapi_spawn_worker;
+ 		exports.napi_cancel_async_work = napi_cancel_async_work;

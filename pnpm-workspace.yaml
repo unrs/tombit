@@ -1,4 +1,4 @@
 allowBuilds:
   lefthook: true
 patchedDependencies:
-  '@emnapi/core@2.0.0-beta.2': patches/@emnapi__core@2.0.0-beta.2.patch
+  '@napi-rs/wasm-runtime@1.2.5': patches/@napi-rs__wasm-runtime@1.2.5.patch

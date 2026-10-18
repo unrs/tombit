@@ -114,9 +114,9 @@ jobs:
         # not ship. `universal-apple-darwin` is dropped: both macOS arches are
         # published separately.
         #
-        # The WASI targets rely on the `@emnapi/core` patch in `patches/`:
-        # its plugin context must expose `napiModule`, which
-        # `@napi-rs/wasm-runtime`'s async-work plugin assigns onto.
+        # The WASI targets rely on the `@napi-rs/wasm-runtime` patch in
+        # `patches/`: its async-work plugin still reads `napiModule`, which
+        # emnapi v2 renamed to `addonModule`.
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
