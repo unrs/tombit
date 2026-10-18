@@ -200,6 +200,13 @@ jobs:
             target: aarch64-apple-darwin
             build: pnpm build --features schema
 
+          - os: ubuntu-latest
+            target: wasm32-wasip1
+            build: pnpm build:debug --release
+          - os: ubuntu-latest
+            target: wasm32-wasip1-threads
+            build: pnpm build:debug --release
+
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -248,6 +255,10 @@ jobs:
           path: |
             tombit.*.node
             tombit.*.wasm
+            tombit.*.wasm.d.ts
+            tombit.wasi*
+            tombit.wasip1*
+            wasi-worker*.mjs
           if-no-files-found: error
 
       - name: Upload generated loader
