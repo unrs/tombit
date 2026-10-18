@@ -1,0 +1,50 @@
+[package]
+name = "tombit"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+license = "MIT"
+repository = "https://github.com/unrs/tombit"
+description = "Unified toolkit for tombi: format, lint and serialize TOML from Node.js and WebAssembly"
+keywords = ["tombi", "toml", "formatter", "linter", "napi"]
+categories = ["development-tools", "parser-implementations"]
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3.14", default-features = false, features = [
+  "napi4",
+  "serde-json",
+] }
+napi-derive = "3.6"
+serde_json = "1"
+tombi-config = { path = "vendor/tombi/crates/tombi-config" }
+
+# tombi is vendored as a submodule (`vendor/tombi`) because its crates are not
+# published on crates.io yet. Bumping the pin is how the toolchain is upgraded.
+#
+# Native keeps tombi's `native` feature: real filesystem and network (schema
+# catalogs, config discovery), matching the CLI.
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+serde_tombi = { path = "vendor/tombi/rust/serde_tombi", default-features = false }
+tombi-lib = { path = "vendor/tombi/rust/tombi-lib", features = ["native"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
+
+# WASI gets the in-memory filesystem and no HTTP client. `serde_tombi/wasm` is a
+# cfg switch that drops its sync `to_string` (which needs tokio's multi-thread
+# runtime) -- it is not a request for the browser runtime.
+[target.'cfg(target_family = "wasm")'.dependencies]
+futures = "0.3"
+serde_tombi = { path = "vendor/tombi/rust/serde_tombi", default-features = false, features = [
+  "wasm",
+] }
+tombi-lib = { path = "vendor/tombi/rust/tombi-lib", default-features = false }
+
+[build-dependencies]
+napi-build = "2.6"
+
+[profile.release]
+lto = "thin"
+strip = "symbols"
