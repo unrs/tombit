@@ -82,8 +82,6 @@ event loop; `formatSync`/`lintSync` block the calling thread instead.
 - `parse` / `stringify`: deferred deliberately. TOML → JS needs an explicit date mapping
   (`serde_json::Value` cannot absorb tombi's datetime newtypes), and nothing in the current use cases
   needs a value-level round trip — configuration is handled in Rust.
-- napi `wasm32-wasip1-threads` artifact: the core already compiles and runs for WASI; the remaining
-  work is the emnapi link.
 - Mounting files into the wasm virtual filesystem, so discovery can see a host-provided config in a
   browser/WebContainer build (the native build reads the real filesystem).
 
