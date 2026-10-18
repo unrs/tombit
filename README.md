@@ -32,34 +32,43 @@ module.
 ## Usage
 
 ```js
-import { format, lint, resolveConfig } from 'tombit'
+import { format, lint } from 'tombit'
 
-// Discovery happens in Rust, from the file's directory.
 const { formatted, diagnostics } = format('a=1\n', '/project/a.toml', {
-  schema: { enabled: false },
-  format: { rules: { 'indent-width': 4 } },
+  overrideConfig: {
+    schema: { enabled: false },
+    format: { rules: { 'indent-width': 4 } },
+  },
 })
-
-const config = resolveConfig('/project/a.toml')
 ```
 
-Overrides are a plain JavaScript object in tombi's own config shape, merged over the discovered
-config (objects merge recursively, everything else replaces). They are deserialized into
-`tombi_config::Config`, which uses `deny_unknown_fields`, so a misspelled option is an error rather
-than a silently ignored setting.
+The shape mirrors `tombi-lib`: `(source, sourcePath, options)`, where `options.config` is a
+`string`, a `{ content, path }` file, or `false`. Supplying a config uses it instead of discovering
+one; `false` uses tombi's defaults without discovering anything; leaving it out discovers from
+`sourcePath`'s directory.
+
+`overrideConfig` is a plain JavaScript object in tombi's own config shape. It is merged over the base
+config (objects recursively, everything else replaces) and deserialized into `tombi_config::Config`,
+whose `deny_unknown_fields` turns a misspelled option into an error rather than a silently ignored
+setting.
 
 ## API
 
-| Function                                       | Notes                                       |
-| ---------------------------------------------- | ------------------------------------------- |
-| `version()`                                    | package version                             |
-| `format(source, sourcePath, overrides?, discover?)` | `{ formatted, diagnostics }`            |
-| `lint(source, sourcePath, overrides?, discover?)`   | `{ diagnostics }`                       |
-| `resolveConfig(sourcePath, overrides?)`        | the merged config as a plain object         |
+| Function                                    | Notes                        |
+| ------------------------------------------- | ---------------------------- |
+| `version()`                                 | package version              |
+| `format(source, sourcePath, options?)`      | `{ formatted, diagnostics }` |
+| `lint(source, sourcePath, options?)`        | `{ diagnostics }`            |
 
-`discover` defaults to `true`. Pass `false` to skip the filesystem search and use tombi's defaults
-plus the overrides. The calls are synchronous: napi's async executor requires `Send` futures, and
-tombi's wasm futures are deliberately `LocalBoxFuture`.
+`options`:
+
+| Option           | Meaning                                                                                       |
+| ---------------- | --------------------------------------------------------------------------------------------- |
+| `config`         | `false \| string \| { content, path }`; replaces discovery (`false` keeps the defaults)        |
+| `overrideConfig` | merged over the base config                                                                   |
+
+The calls are synchronous: napi's async executor requires `Send` futures, and tombi's wasm futures
+are deliberately `LocalBoxFuture`.
 
 ## Roadmap
 
