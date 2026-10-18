@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  # Temporary: build every target on pull requests without releasing or
+  # publishing. Drop this trigger once the matrix is green.
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,6 +24,7 @@ env:
 jobs:
   release:
     name: Version or prepare release
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -91,7 +95,7 @@ jobs:
   # targets without this gate.
   build:
     needs: release
-    if: needs.release.outputs.publish == 'true'
+    if: always() && (github.event_name == 'pull_request' || needs.release.outputs.publish == 'true')
     uses: ./.github/workflows/build-napi.yml
 
   # npm only lets a trusted publisher be configured for a package that already
@@ -100,7 +104,7 @@ jobs:
   publish:
     name: Publish to npm
     needs: build
-    if: needs.build.result == 'success'
+    if: github.event_name != 'pull_request' && needs.build.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
