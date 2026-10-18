@@ -110,10 +110,13 @@ jobs:
       fail-fast: false
       matrix:
         # Not built here: `x86_64-pc-windows-gnu` is rejected by `-x`
-        # (cargo-xwin is MSVC-only), and the wasm targets need an emnapi
-        # `wasm32-wasip1` archive (emnapi 1.11.2 ships none) plus the unresolved
-        # `emnapi_create_env` link for wasip1-threads. `universal-apple-darwin` is
-        # dropped: the two macOS arches are published separately.
+        # (cargo-xwin is MSVC-only). For wasm, napi-rs links a prebuilt emnapi
+        # archive: `libemnapi-napi-rs-mt.a` for `wasm32-wasip1-threads` and
+        # `libemnapi-basic-napi-rs.a` for `wasm32-wasip1`. emnapi 1.11.x only
+        # publishes the napi-rs archives for threads (the single-threaded one
+        # needs emnapi v2), and the threads archive still fails to link
+        # `emnapi_create_env`. `universal-apple-darwin` is dropped: both macOS
+        # arches are published separately.
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
