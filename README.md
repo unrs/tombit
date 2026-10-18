@@ -3,10 +3,10 @@
 Unified toolkit for [tombi][]: TOML **format** and **lint** from Node.js and WebAssembly, with
 tombi's own configuration discovery.
 
-> **Status:** scaffold. `format` and `lint` work on the native target and are covered by tests.
-> Configuration discovery and merging live in Rust; JavaScript only supplies overrides. Both WASI
-> targets link with emnapi v2, but their generated loader fails on import with the current
-> `@napi-rs/wasm-runtime`, so wasm is not published yet.
+> **Status:** scaffold. `format` and `lint` work on the native and WASI targets and are covered by
+> tests. Configuration discovery and merging live in Rust; JavaScript only supplies overrides. WASI
+> keeps schema resolution off; the `@emnapi/core` patch in `patches/` makes the generated loader work
+> with emnapi v2.
 
 ## Why
 

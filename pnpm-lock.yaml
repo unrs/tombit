@@ -162,6 +162,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@emnapi/core@2.0.0-beta.2': cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369
+
 importers:
 
   .:
@@ -172,15 +175,21 @@ importers:
       '@changesets/cli':
         specifier: ^3.0.3
         version: 3.0.3
+      '@emnapi/core':
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369)
+      '@emnapi/runtime':
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2
       '@napi-rs/cli':
         specifier: ^3.10.8
-        version: 3.10.8(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(emnapi@1.11.2)
+        version: 3.10.8(@emnapi/core@2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369))(@emnapi/runtime@2.0.0-beta.2)(emnapi@2.0.0-beta.2)
       '@napi-rs/wasm-runtime':
         specifier: ^1.2.5
-        version: 1.2.5(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)
+        version: 1.2.5(@emnapi/core@2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369))(@emnapi/runtime@2.0.0-beta.2)
       emnapi:
-        specifier: 1.11.2
-        version: 1.11.2
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2
       lefthook:
         specifier: ^2.2.2
         version: 2.2.2
@@ -273,17 +282,26 @@ packages:
   '@emnapi/core@1.9.2':
     resolution: {integrity: sha512-UC+ZhH3XtczQYfOlu3lNEkdW/p4dsJ1r/bP7H8+rhao3TTTMO1ATq/4DdIi23XuGoFY+Cz0JmCbdVl0hz9jZcA==}
 
+  '@emnapi/core@2.0.0-beta.2':
+    resolution: {integrity: sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==}
+
   '@emnapi/runtime@1.11.2':
     resolution: {integrity: sha512-kyOl3X0DuTiT1h2ft8r2fYO8JYtU9a9Xis/zBSiGArNaagCOWx90N1k2wxp18czFDH+OgcWGb5ZP/XMt3dcyPA==}
 
   '@emnapi/runtime@1.9.2':
     resolution: {integrity: sha512-3U4+MIWHImeyu1wnmVygh5WlgfYDtyf0k8AbLhMFxOipihf6nrWC4syIm/SwEeec0mNSafiiNnMJwbza/Is6Lw==}
 
+  '@emnapi/runtime@2.0.0-beta.2':
+    resolution: {integrity: sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==}
+
   '@emnapi/wasi-threads@1.2.1':
     resolution: {integrity: sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==}
 
   '@emnapi/wasi-threads@1.2.2':
     resolution: {integrity: sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==}
+
+  '@emnapi/wasi-threads@2.2.0':
+    resolution: {integrity: sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw==}
 
   '@inquirer/ansi@2.0.9':
     resolution: {integrity: sha512-0Ywt3S8tqM6TWUcsRlBFQ1x+X3/o8kktX0ZiKAnByYb9GFDknnOhse1PVtfiD2BXPI8ar+BWx9PV9R0lQIcygw==}
@@ -1044,8 +1062,8 @@ packages:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
 
-  emnapi@1.11.2:
-    resolution: {integrity: sha512-iMt/XQc69fFn2EvcU6tm14HmXKwyy0lnABugsQlqp6xFuZIUuO+ONVSg2mz+MTVF8WbC+bic65AvRXdoldALKg==}
+  emnapi@2.0.0-beta.2:
+    resolution: {integrity: sha512-ZO2KS7bFQNo8zcDl5nWW55nvZBfC+msrGRezZn6OoJJQKXGOWVp6RYw25wdJkDIIADrAJjf4XEQAbtancmeH7w==}
     peerDependencies:
       node-addon-api: '>= 6.1.0'
     peerDependenciesMeta:
@@ -1563,6 +1581,7 @@ snapshots:
     dependencies:
       '@emnapi/wasi-threads': 1.2.2
       tslib: 2.8.1
+    optional: true
 
   '@emnapi/core@1.9.2':
     dependencies:
@@ -1570,14 +1589,24 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@emnapi/core@2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369)':
+    dependencies:
+      '@emnapi/wasi-threads': 2.2.0
+      tslib: 2.8.1
+
   '@emnapi/runtime@1.11.2':
     dependencies:
       tslib: 2.8.1
+    optional: true
 
   '@emnapi/runtime@1.9.2':
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@emnapi/runtime@2.0.0-beta.2':
+    dependencies:
+      tslib: 2.8.1
 
   '@emnapi/wasi-threads@1.2.1':
     dependencies:
@@ -1585,6 +1614,11 @@ snapshots:
     optional: true
 
   '@emnapi/wasi-threads@1.2.2':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  '@emnapi/wasi-threads@2.2.0':
     dependencies:
       tslib: 2.8.1
 
@@ -1703,7 +1737,7 @@ snapshots:
       tinyglobby: 0.2.17
       yaml: 2.9.1
 
-  '@napi-rs/cli@3.10.8(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(emnapi@1.11.2)':
+  '@napi-rs/cli@3.10.8(@emnapi/core@2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369))(@emnapi/runtime@2.0.0-beta.2)(emnapi@2.0.0-beta.2)':
     dependencies:
       '@inquirer/prompts': 8.7.3
       '@napi-rs/cross-toolchain': 1.0.3
@@ -1718,9 +1752,9 @@ snapshots:
       typanion: 3.14.0
       typescript: 6.0.3
     optionalDependencies:
-      '@emnapi/core': 1.11.2
-      '@emnapi/runtime': 1.11.2
-      emnapi: 1.11.2
+      '@emnapi/core': 2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369)
+      '@emnapi/runtime': 2.0.0-beta.2
+      emnapi: 2.0.0-beta.2
     transitivePeerDependencies:
       - '@napi-rs/cross-toolchain-arm64-target-aarch64'
       - '@napi-rs/cross-toolchain-arm64-target-armv7'
@@ -1894,6 +1928,7 @@ snapshots:
       '@emnapi/core': 1.11.2
       '@emnapi/runtime': 1.11.2
       '@tybys/wasm-util': 0.10.4
+    optional: true
 
   '@napi-rs/wasm-runtime@1.2.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
     dependencies:
@@ -1901,6 +1936,12 @@ snapshots:
       '@emnapi/runtime': 1.9.2
       '@tybys/wasm-util': 0.10.4
     optional: true
+
+  '@napi-rs/wasm-runtime@1.2.5(@emnapi/core@2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369))(@emnapi/runtime@2.0.0-beta.2)':
+    dependencies:
+      '@emnapi/core': 2.0.0-beta.2(patch_hash=cb2faacc04f14a0e521a77fb2fdaf07cad0b79f6e3ff6415de97c2594fb62369)
+      '@emnapi/runtime': 2.0.0-beta.2
+      '@tybys/wasm-util': 0.10.4
 
   '@napi-rs/wasm-tools-android-arm-eabi@1.1.0':
     optional: true
@@ -2135,7 +2176,7 @@ snapshots:
 
   detect-libc@2.1.2: {}
 
-  emnapi@1.11.2: {}
+  emnapi@2.0.0-beta.2: {}
 
   es-module-lexer@2.3.2: {}
 

@@ -1,0 +1,28 @@
+diff --git a/dist/emnapi-core.full.js b/dist/emnapi-core.full.js
+index d3869d74c4baa5fab80962aaf9ad1ccd5b917741..632fa4068883f6df0e3a015724203aa915063eb0 100644
+--- a/dist/emnapi-core.full.js
++++ b/dist/emnapi-core.full.js
+@@ -8278,7 +8278,8 @@ function createAddonModule (options) {
+     // addonModule.imports.napi.napi_ref_threadsafe_function = napi_ref_threadsafe_function
+     const pluginCtx = {
+         emnapiString,
+-        emnapiExternalMemory
++        emnapiExternalMemory,
++        napiModule: addonModule
+     };
+     Object.keys(initMod).forEach(k => {
+         Object.defineProperty(pluginCtx, k, {
+diff --git a/dist/emnapi-core.js b/dist/emnapi-core.js
+index b83c5f07acb000f4e81a8e54e96d8d74e8eb5503..11888939e4cdb07c006ee8c063cf82f68649cf4c 100644
+--- a/dist/emnapi-core.js
++++ b/dist/emnapi-core.js
+@@ -7168,7 +7168,8 @@ function createAddonModule (options) {
+     // addonModule.imports.napi.napi_ref_threadsafe_function = napi_ref_threadsafe_function
+     const pluginCtx = {
+         emnapiString,
+-        emnapiExternalMemory
++        emnapiExternalMemory,
++        napiModule: addonModule
+     };
+     Object.keys(initMod).forEach(k => {
+         Object.defineProperty(pluginCtx, k, {

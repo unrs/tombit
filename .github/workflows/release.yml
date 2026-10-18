@@ -111,12 +111,12 @@ jobs:
       matrix:
         # Not built here: `x86_64-pc-windows-gnu` needs a `libnode.dll` for
         # napi-build to link against, which the Node Windows distribution does
-        # not ship. The wasm targets link with emnapi 2.0.0-beta.2
-        # (`libemnapi-basic-napi-rs.a` / `libemnapi-napi-rs-mt.a`), but the
-        # generated loader crashes on import with `@napi-rs/wasm-runtime` 1.2.5
-        # (`initWorker` on undefined), so they stay out until the runtime glue
-        # supports emnapi v2. `universal-apple-darwin` is dropped: both macOS
-        # arches are published separately.
+        # not ship. `universal-apple-darwin` is dropped: both macOS arches are
+        # published separately.
+        #
+        # The WASI targets rely on the `@emnapi/core` patch in `patches/`:
+        # its plugin context must expose `napiModule`, which
+        # `@napi-rs/wasm-runtime`'s async-work plugin assigns onto.
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
@@ -200,6 +200,13 @@ jobs:
             target: aarch64-apple-darwin
             build: pnpm build --features schema
 
+          - os: ubuntu-latest
+            target: wasm32-wasip1
+            build: pnpm build:debug --release
+          - os: ubuntu-latest
+            target: wasm32-wasip1-threads
+            build: pnpm build:debug --release
+
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -249,6 +256,10 @@ jobs:
           path: |
             tombit.*.node
             tombit.*.wasm
+            tombit.*.wasm.d.ts
+            tombit.wasi*
+            tombit.wasip1*
+            wasi-worker*.mjs
           if-no-files-found: error
 
       - name: Upload generated loader
