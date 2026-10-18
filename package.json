@@ -47,7 +47,6 @@
       "aarch64-pc-windows-msvc",
       "x86_64-apple-darwin",
       "x86_64-pc-windows-msvc",
-      "x86_64-pc-windows-gnu",
       "x86_64-unknown-linux-gnu",
       "x86_64-unknown-linux-musl",
       "x86_64-unknown-linux-ohos",
@@ -56,13 +55,10 @@
       "armv7-unknown-linux-gnueabihf",
       "armv7-unknown-linux-musleabihf",
       "armv7-linux-androideabi",
-      "universal-apple-darwin",
       "loongarch64-unknown-linux-gnu",
       "riscv64gc-unknown-linux-gnu",
       "powerpc64le-unknown-linux-gnu",
-      "s390x-unknown-linux-gnu",
-      "wasm32-wasip1",
-      "wasm32-wasip1-threads"
+      "s390x-unknown-linux-gnu"
     ],
     "rootPublisher": "pnpm"
   },

@@ -106,6 +106,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Not built here yet: `universal-apple-darwin` needs `napi universalize`
+        # over both macOS arches, `x86_64-pc-windows-gnu` is rejected by `-x`
+        # (cargo-xwin is MSVC-only), and the wasm targets need an emnapi archive
+        # that napi-rs 3.10.8 does not ship for wasip1, plus the unresolved
+        # `emnapi_create_env` link for wasip1-threads.
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
@@ -115,8 +120,6 @@ jobs:
             build: pnpm build
           - os: windows-latest
             target: i686-pc-windows-msvc
-            architecture: x86
-            cpu: ia32
             build: pnpm build
 
           - os: ubuntu-latest
@@ -161,10 +164,6 @@ jobs:
               export CARGO_TARGET_LOONGARCH64_UNKNOWN_LINUX_GNU_LINKER=loongarch64-linux-gnu-gcc-13 &&
               pnpm build
           - os: ubuntu-latest
-            target: x86_64-pc-windows-gnu
-            build: pnpm build -x
-
-          - os: ubuntu-latest
             target: aarch64-linux-android
             build: pnpm build
           - os: ubuntu-latest
@@ -185,17 +184,7 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
             build: pnpm build
-          - os: macos-latest
-            target: universal-apple-darwin
-            rust_target: x86_64-apple-darwin,aarch64-apple-darwin
-            build: pnpm build
 
-          - os: ubuntu-latest
-            target: wasm32-wasip1
-            build: pnpm build:debug --release
-          - os: ubuntu-latest
-            target: wasm32-wasip1-threads
-            build: pnpm build:debug --release
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -213,9 +202,7 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
-          # `universal-apple-darwin` is not a rustup target: napi lipo's both
-          # macOS arches, so both must be installed.
-          targets: ${{ matrix.rust_target || matrix.target }}
+          targets: ${{ matrix.target }}
 
       - name: Setup Zig
         if: contains(matrix.target, 'musl') || contains(matrix.target, 'windows-gnu')
