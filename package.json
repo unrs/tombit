@@ -1,7 +1,7 @@
 {
   "name": "tombit",
-  "version": "0.1.0",
-  "description": "Unified toolkit for tombi: format, lint and serialize TOML from Node.js and WebAssembly",
+  "version": "0.0.0",
+  "description": "Unified toolkit for tombi: TOML format and lint from Node.js and WebAssembly",
   "main": "index.js",
   "types": "index.d.ts",
   "exports": {
