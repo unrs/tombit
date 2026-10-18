@@ -109,11 +109,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Not built here yet: `universal-apple-darwin` needs `napi universalize`
-        # over both macOS arches, `x86_64-pc-windows-gnu` is rejected by `-x`
-        # (cargo-xwin is MSVC-only), and the wasm targets need an emnapi archive
-        # that napi-rs 3.10.8 does not ship for wasip1, plus the unresolved
-        # `emnapi_create_env` link for wasip1-threads.
+        # Not built here: `x86_64-pc-windows-gnu` is rejected by `-x`
+        # (cargo-xwin is MSVC-only), and the wasm targets need an emnapi
+        # `wasm32-wasip1` archive (emnapi 1.11.2 ships none) plus the unresolved
+        # `emnapi_create_env` link for wasip1-threads. `universal-apple-darwin` is
+        # dropped: the two macOS arches are published separately.
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
