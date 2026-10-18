@@ -75,6 +75,14 @@ fn to_diagnostics(diagnostics: &[tombi_lib::Diagnostic]) -> Vec<Diagnostic> {
         .collect()
 }
 
+#[cfg(not(target_family = "wasm"))]
+thread_local! {
+    // One current-thread runtime per libuv worker, instead of building a
+    // multi-thread runtime for every call.
+    static RUNTIME: std::cell::RefCell<Option<tokio::runtime::Runtime>> =
+        const { std::cell::RefCell::new(None) };
+}
+
 /// Run a future to completion.
 ///
 /// napi's async executor requires `Send` futures, and tombi's wasm futures are
@@ -84,10 +92,19 @@ fn to_diagnostics(diagnostics: &[tombi_lib::Diagnostic]) -> Vec<Diagnostic> {
 /// filesystem is in-memory.
 #[cfg(not(target_family = "wasm"))]
 fn block_on<F: std::future::Future>(future: F) -> Result<F::Output> {
-    let runtime =
-        tokio::runtime::Runtime::new().map_err(|error| Error::from_reason(error.to_string()))?;
+    RUNTIME.with(|slot| {
+        let mut slot = slot.borrow_mut();
+        if slot.is_none() {
+            *slot = Some(
+                tokio::runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()
+                    .map_err(|error| Error::from_reason(error.to_string()))?,
+            );
+        }
 
-    Ok(runtime.block_on(future))
+        Ok(slot.as_ref().expect("runtime installed").block_on(future))
+    })
 }
 
 #[cfg(target_family = "wasm")]
