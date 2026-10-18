@@ -185,10 +185,11 @@ fn config_input(config: &Config, config_path: Option<PathBuf>) -> Result<ConfigI
 
 fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
     let (base, config_path) = base_config(source_path, options)?;
-    // The binding is built without an HTTP client (see `Cargo.toml`), so schema
-    // resolution would fail on the first catalog fetch. Disable it in the base
-    // config; `enabled = true` survives the round-trip as serde's default, so a
-    // caller can still opt in (and gets a clear fetch error if it does).
+    // A build without the schema client cannot resolve a catalog, so a fetch
+    // would fail: disable resolution here. A build with the client keeps tombi's
+    // default and leaves the decision to the caller — a formatter that wants to
+    // stay offline passes `overrideConfig: { schema: { enabled: false } }`.
+    #[cfg(not(feature = "schema"))]
     let base = merge_override(
         base,
         Some(serde_json::json!({ "schema": { "enabled": false } })),

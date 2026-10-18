@@ -29,8 +29,9 @@ tombi-config = { path = "tombi/crates/tombi-config" }
 # `tombi-schema-store/native` -> reqwest -> rustls/ring, and ring's C/assembly
 # build only works on the targets that ship a supported toolchain. Targets that
 # cannot build it are compiled without `schema` and get the no-network stub.
-# The binding always starts offline; a caller opts in with
-# `overrideConfig: { schema: { enabled: true } }`.
+# Builds without it force `schema.enabled = false`, since a fetch would fail;
+# builds with it keep tombi's default (on) and the caller overrides with
+# `overrideConfig: { schema: { enabled: false } }` to stay offline.
 [features]
 default = []
 schema = ["tombi-lib/native"]

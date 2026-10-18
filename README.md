@@ -68,9 +68,9 @@ setting.
 | `overrideConfig` | merged over the base config                                                                   |
 
 Schema resolution is compiled in only where the target can build `ring` (linux, macOS, Windows and
-FreeBSD). It is off by default — a formatter should not reach the network on its own — and a caller
-opts in with `overrideConfig: { schema: { enabled: true } }`. On a build without the client, that
-opt-in fails with a clear `No HTTP client feature enabled` error.
+FreeBSD); those builds follow tombi's default (on), and a formatter that wants to stay offline passes
+`overrideConfig: { schema: { enabled: false } }`. Builds without the client force it off, because a
+fetch there would fail with `No HTTP client feature enabled`.
 
 The calls are synchronous: napi's async executor requires `Send` futures, and tombi's wasm futures
 are deliberately `LocalBoxFuture`.
@@ -104,7 +104,7 @@ crates are not published on crates.io yet. The dependency is split by target:
   filesystem off the target rather than the feature, so discovery works either way. `schema` pulls in
   `tombi-schema-store/native` → `reqwest` → `rustls`/`ring`; `ring`'s C/assembly build only works on a
   target with a supported toolchain, so the release builds enable it where it does and omit it
-  elsewhere (same API, offline stub).
+  elsewhere (same API, offline stub there).
 - **wasm** — `tombi-lib` without default features (in-memory filesystem, no HTTP client) plus
   `serde_tombi/wasm`. That feature is a cfg switch that drops `serde_tombi`'s sync `to_string`, which
   needs tokio's multi-thread runtime; it is not a request for the browser runtime.
