@@ -3,10 +3,10 @@
 Unified toolkit for [tombi][]: TOML **format** and **lint** from Node.js and WebAssembly, with
 tombi's own configuration discovery.
 
-> **Status:** scaffold. `format`, `lint` and `resolveConfig` work on the native target and are covered
-> by tests. Configuration discovery and merging live in Rust; JavaScript only supplies overrides.
-> A `.wasm` build compiles and runs for WASI at the core level, but the napi `wasm32-wasip1-threads`
-> link is not resolved yet.
+> **Status:** scaffold. `format` and `lint` work on the native target and are covered by tests.
+> Configuration discovery and merging live in Rust; JavaScript only supplies overrides. A `.wasm`
+> build compiles and runs for WASI at the core level, but the napi `wasm32-wasip1-threads` link is
+> not resolved yet.
 
 ## Why
 
@@ -95,8 +95,11 @@ just check        # fmt + clippy + Rust and JS tests
 tombi lives in `tombi/` at the repository root as a git submodule pinned to a commit, because its
 crates are not published on crates.io yet. The dependency is split by target:
 
-- **native** — `tombi-lib` with the `native` feature: real filesystem and network, so discovery and
-  schema catalogs behave like the CLI.
+- **native** — `tombi-lib` without its `native` feature. `tombi-fs` keys its real filesystem off the
+  target rather than the feature, so discovery still reads the project; what `native` would add is
+  `tombi-schema-store/native` → `reqwest` → `rustls`/`ring`, and `ring`'s C/assembly build is what
+  breaks every cross target. Schema-catalog fetching is therefore unavailable, and the formatter
+  disables schema lookup anyway.
 - **wasm** — `tombi-lib` without default features (in-memory filesystem, no HTTP client) plus
   `serde_tombi/wasm`. That feature is a cfg switch that drops `serde_tombi`'s sync `to_string`, which
   needs tokio's multi-thread runtime; it is not a request for the browser runtime.

@@ -35,3 +35,7 @@ artifacts/
 
 # Local task scratch space
 .tasks/
+
+# napi-rs filesystem transaction scratch
+.napi-rs-filesystem-transaction*
+.*.prepared.tmp

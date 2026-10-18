@@ -25,11 +25,14 @@ tombi-config = { path = "tombi/crates/tombi-config" }
 # tombi is vendored as a submodule (`tombi`) because its crates are not
 # published on crates.io yet. Bumping the pin is how the toolchain is upgraded.
 #
-# Native keeps tombi's `native` feature: real filesystem and network (schema
-# catalogs, config discovery), matching the CLI.
+# `tombi-lib`'s `native` feature is deliberately off: it enables
+# `tombi-schema-store/native` -> reqwest -> rustls/ring, and ring's C/assembly
+# build is what breaks every cross target. The filesystem stays real (`tombi-fs`
+# keys off the target, not the feature), so config discovery is unaffected; only
+# schema-catalog fetching goes away, and the formatter disables that anyway.
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 serde_tombi = { path = "tombi/rust/serde_tombi", default-features = false }
-tombi-lib = { path = "tombi/rust/tombi-lib", features = ["native"] }
+tombi-lib = { path = "tombi/rust/tombi-lib", default-features = false }
 tokio = { version = "1", features = ["rt-multi-thread"] }
 
 # WASI gets the in-memory filesystem and no HTTP client. `serde_tombi/wasm` is a
