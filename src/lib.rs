@@ -1,6 +1,10 @@
 #![deny(clippy::all)]
 
+use std::collections::HashMap;
+use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
+use std::sync::{LazyLock, Mutex};
+use std::time::SystemTime;
 
 use napi::bindgen_prelude::*;
 use napi::{Env, Task};
@@ -165,6 +169,111 @@ fn merge_override(base: Config, overrides: Option<Value>) -> Result<Config> {
         .map_err(|error| Error::from_reason(format!("invalid tombit config: {error}")))
 }
 
+/// A config resolved once and reused across calls: a formatter calls
+/// `format`/`lint` per file, and discovery, merging and serialization would
+/// otherwise run for every one of them.
+#[derive(Clone)]
+struct ResolvedConfig {
+    content: String,
+    config_path: Option<PathBuf>,
+    config_modified: Option<SystemTime>,
+    dir_modified: Option<SystemTime>,
+}
+
+impl ResolvedConfig {
+    fn is_valid(&self, source_dir: &Path) -> bool {
+        if let (Some(path), Some(modified)) = (&self.config_path, self.config_modified) {
+            match modified_at(path) {
+                Some(current) if current == modified => {}
+                _ => return false,
+            }
+        }
+        if let Some(modified) = self.dir_modified {
+            match modified_at(source_dir) {
+                Some(current) if current == modified => {}
+                _ => return false,
+            }
+        }
+        true
+    }
+}
+
+static CONFIG_CACHE: LazyLock<Mutex<HashMap<String, ResolvedConfig>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+const CONFIG_CACHE_LIMIT: usize = 256;
+
+fn modified_at(path: &Path) -> Option<SystemTime> {
+    std::fs::metadata(path).ok()?.modified().ok()
+}
+
+fn source_dir(source_path: &str) -> &Path {
+    Path::new(source_path)
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .unwrap_or_else(|| Path::new("."))
+}
+
+fn hash_str(value: &str) -> u64 {
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    value.hash(&mut hasher);
+    hasher.finish()
+}
+
+fn config_cache_key(source_path: &str, options: &Options) -> Option<String> {
+    let overrides = serde_json::to_string(&options.override_config).ok()?;
+    let source = match &options.config {
+        None => format!("dir:{}", source_dir(source_path).display()),
+        Some(Either3::A(false)) => "defaults".to_owned(),
+        Some(Either3::A(true)) => return None,
+        Some(Either3::B(content)) => format!("text:{}", hash_str(content)),
+        Some(Either3::C(file)) => format!("file:{}:{}", file.path, hash_str(&file.content)),
+    };
+    Some(format!("{source}\u{1f}{overrides}"))
+}
+
+fn config_cache_get(key: &str, source_dir: &Path) -> Option<ConfigInput> {
+    let entry = {
+        let cache = CONFIG_CACHE
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        cache.get(key).cloned()?
+    };
+    if !entry.is_valid(source_dir) {
+        return None;
+    }
+    Some(match &entry.config_path {
+        Some(path) => ConfigInput::File {
+            content: entry.content,
+            path: path.clone(),
+        },
+        None => ConfigInput::Text(entry.content),
+    })
+}
+
+fn config_cache_put(
+    key: String,
+    content: String,
+    config_path: Option<PathBuf>,
+    config_modified: Option<SystemTime>,
+    dir_modified: Option<SystemTime>,
+) {
+    let mut cache = CONFIG_CACHE
+        .lock()
+        .unwrap_or_else(|error| error.into_inner());
+    if cache.len() >= CONFIG_CACHE_LIMIT {
+        cache.clear();
+    }
+    cache.insert(
+        key,
+        ResolvedConfig {
+            content,
+            config_path,
+            config_modified,
+            dir_modified,
+        },
+    );
+}
+
 /// The base config: the one the caller supplied, or tombi's discovery.
 fn base_config(source_path: &str, options: &Options) -> Result<(Config, Option<PathBuf>)> {
     match &options.config {
@@ -233,6 +342,16 @@ fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
         }
     }
 
+    let dir = source_dir(source_path);
+    let cache_key = config_cache_key(source_path, options);
+    if let Some(key) = &cache_key {
+        if let Some(config) = config_cache_get(key, dir) {
+            return Ok(TombiOptions {
+                config: Some(config),
+            });
+        }
+    }
+
     let (base, config_path) = base_config(source_path, options)?;
     let config = merge_override(base, options.override_config.clone())?;
     // WASI never resolves schemas, and a native build without the schema client
@@ -245,9 +364,23 @@ fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
         config,
         Some(serde_json::json!({ "schema": { "enabled": false } })),
     )?;
+    let input = config_input(&config, config_path)?;
+
+    if let Some(key) = cache_key {
+        let discovered = options.config.is_none();
+        let (content, cached_path) = match &input {
+            ConfigInput::Text(content) => (content.clone(), None),
+            ConfigInput::File { content, path } => (content.clone(), Some(path.clone())),
+        };
+        let config_modified = discovered
+            .then(|| cached_path.as_deref().and_then(modified_at))
+            .flatten();
+        let dir_modified = discovered.then(|| modified_at(dir)).flatten();
+        config_cache_put(key, content, cached_path, config_modified, dir_modified);
+    }
 
     Ok(TombiOptions {
-        config: Some(config_input(&config, config_path)?),
+        config: Some(input),
     })
 }
 
