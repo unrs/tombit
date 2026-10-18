@@ -186,12 +186,12 @@ fn config_input(config: &Config, config_path: Option<PathBuf>) -> Result<ConfigI
 fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
     let (base, config_path) = base_config(source_path, options)?;
     let config = merge_override(base, options.override_config.clone())?;
-    // A build without the schema client cannot resolve a catalog, so it must not
-    // be switched back on by the caller either: enforce this on the final merged
-    // config. A build with the client keeps tombi's default and leaves the
-    // decision to the caller, which passes `schema: { enabled: false }` to stay
-    // offline.
-    #[cfg(not(feature = "schema"))]
+    // WASI never resolves schemas, and a native build without the schema client
+    // cannot resolve a catalog — either way a caller must not be able to switch
+    // it back on. Enforce this on the final merged config. A native build with
+    // the client keeps tombi's default and leaves the decision to the caller,
+    // which passes `schema: { enabled: false }` to stay offline.
+    #[cfg(any(target_family = "wasm", not(feature = "schema")))]
     let config = merge_override(
         config,
         Some(serde_json::json!({ "schema": { "enabled": false } })),
