@@ -25,11 +25,16 @@ tombi-config = { path = "tombi/crates/tombi-config" }
 # tombi is vendored as a submodule (`tombi`) because its crates are not
 # published on crates.io yet. Bumping the pin is how the toolchain is upgraded.
 #
-# `tombi-lib`'s `native` feature is deliberately off: it enables
+# `tombi-lib`'s `native` feature is opt-in through ours: it enables
 # `tombi-schema-store/native` -> reqwest -> rustls/ring, and ring's C/assembly
-# build is what breaks every cross target. The filesystem stays real (`tombi-fs`
-# keys off the target, not the feature), so config discovery is unaffected; only
-# schema-catalog fetching goes away, and the formatter disables that anyway.
+# build only works on the targets that ship a supported toolchain. Targets that
+# cannot build it are compiled without `schema` and get the no-network stub.
+# The binding always starts offline; a caller opts in with
+# `overrideConfig: { schema: { enabled: true } }`.
+[features]
+default = []
+schema = ["tombi-lib/native"]
+
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 serde_tombi = { path = "tombi/rust/serde_tombi", default-features = false }
 tombi-lib = { path = "tombi/rust/tombi-lib", default-features = false }

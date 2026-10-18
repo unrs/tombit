@@ -92,9 +92,12 @@ jobs:
           esac
 
   # Every target needs its own build recipe: musl goes through zig, riscv64 and
-  # loongarch64 need a cross gcc, s390x needs lld, the wasm targets build with a
-  # different profile, and FreeBSD needs its own VM (see `build-freebsd`).
-  # Modelled on unrs-resolver's `release-napi.yml`.
+  # loongarch64 need a cross gcc, and FreeBSD needs its own VM (see
+  # `build-freebsd`). Modelled on unrs-resolver's `release-napi.yml`.
+  #
+  # `--features schema` compiles tombi's HTTP client, which needs `ring` and
+  # therefore a supported C toolchain. It is enabled on linux/macOS/windows and
+  # FreeBSD; the other targets ship the offline stub with the same API.
   #
   # On pull requests this runs with the release gate bypassed, so a target's
   # recipe can be debugged before a release exists.
@@ -114,26 +117,26 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            build: pnpm build
+            build: pnpm build --features schema
           - os: windows-latest
             target: aarch64-pc-windows-msvc
-            build: pnpm build
+            build: pnpm build --features schema
           - os: windows-latest
             target: i686-pc-windows-msvc
-            build: pnpm build
+            build: pnpm build --features schema
 
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            build: pnpm build --use-napi-cross
+            build: pnpm build --use-napi-cross --features schema
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-            build: pnpm build --use-napi-cross
+            build: export CFLAGS_aarch64_unknown_linux_gnu="-D__ARM_ARCH=8" && pnpm build --use-napi-cross --features schema
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
-            build: pnpm build -x
+            build: pnpm build -x --features schema
           - os: ubuntu-latest
             target: aarch64-unknown-linux-musl
-            build: pnpm build -x
+            build: pnpm build -x --features schema
           - os: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf
             build: pnpm build --use-napi-cross
@@ -180,10 +183,10 @@ jobs:
 
           - os: macos-latest
             target: x86_64-apple-darwin
-            build: pnpm build
+            build: pnpm build --features schema
           - os: macos-latest
             target: aarch64-apple-darwin
-            build: pnpm build
+            build: pnpm build --features schema
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -277,7 +280,7 @@ jobs:
             export COREPACK_INTEGRITY_KEYS=0
             sudo corepack enable
             pnpm install
-            pnpm build --target x86_64-unknown-freebsd
+            pnpm build --target x86_64-unknown-freebsd --features schema
             rm -rf node_modules target
 
       - name: Upload binding

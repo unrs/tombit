@@ -67,6 +67,11 @@ setting.
 | `config`         | `false \| string \| { content, path }`; replaces discovery (`false` keeps the defaults)        |
 | `overrideConfig` | merged over the base config                                                                   |
 
+Schema resolution is compiled in only where the target can build `ring` (linux, macOS, Windows and
+FreeBSD). It is off by default — a formatter should not reach the network on its own — and a caller
+opts in with `overrideConfig: { schema: { enabled: true } }`. On a build without the client, that
+opt-in fails with a clear `No HTTP client feature enabled` error.
+
 The calls are synchronous: napi's async executor requires `Send` futures, and tombi's wasm futures
 are deliberately `LocalBoxFuture`.
 
@@ -95,11 +100,11 @@ just check        # fmt + clippy + Rust and JS tests
 tombi lives in `tombi/` at the repository root as a git submodule pinned to a commit, because its
 crates are not published on crates.io yet. The dependency is split by target:
 
-- **native** — `tombi-lib` without its `native` feature. `tombi-fs` keys its real filesystem off the
-  target rather than the feature, so discovery still reads the project; what `native` would add is
-  `tombi-schema-store/native` → `reqwest` → `rustls`/`ring`, and `ring`'s C/assembly build is what
-  breaks every cross target. Schema-catalog fetching is therefore unavailable, and the formatter
-  disables schema lookup anyway.
+- **native** — `tombi-lib`, with our `schema` feature adding its `native` one. `tombi-fs` keys its real
+  filesystem off the target rather than the feature, so discovery works either way. `schema` pulls in
+  `tombi-schema-store/native` → `reqwest` → `rustls`/`ring`; `ring`'s C/assembly build only works on a
+  target with a supported toolchain, so the release builds enable it where it does and omit it
+  elsewhere (same API, offline stub).
 - **wasm** — `tombi-lib` without default features (in-memory filesystem, no HTTP client) plus
   `serde_tombi/wasm`. That feature is a cfg switch that drops `serde_tombi`'s sync `to_string`, which
   needs tokio's multi-thread runtime; it is not a request for the browser runtime.
