@@ -1,0 +1,14 @@
+name: Build NAPI (pull request)
+
+# Same matrix as the release, without the `publish == 'true'` gate, so a pull
+# request can debug every target's build recipe. The matrix lives in
+# `build-napi.yml`, which the release workflow calls too.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-napi.yml
