@@ -5,8 +5,7 @@ tombi's own configuration discovery.
 
 > **Status:** scaffold. `format` and `lint` work on the native and WASI targets and are covered by
 > tests. Configuration discovery and merging live in Rust; JavaScript only supplies overrides. WASI
-> keeps schema resolution off; the `@napi-rs/wasm-runtime` patch in `patches/` makes the generated loader work
-> with emnapi v2.
+> keeps schema resolution off.
 
 ## Why
 

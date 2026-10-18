@@ -1,4 +1,2 @@
 allowBuilds:
   lefthook: true
-patchedDependencies:
-  '@napi-rs/wasm-runtime@1.2.5': patches/@napi-rs__wasm-runtime@1.2.5.patch
