@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@napi-rs/wasm-runtime@1.2.5': 252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57
+  '@napi-rs/wasm-runtime@1.2.5': 1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de
 
 importers:
 
@@ -186,7 +186,7 @@ importers:
         version: 3.10.8(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)(emnapi@2.0.0-beta.2)
       '@napi-rs/wasm-runtime':
         specifier: ^1.2.5
-        version: 1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)
+        version: 1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)
       emnapi:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2
@@ -1820,7 +1820,7 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.11.2
       '@emnapi/runtime': 1.11.2
-      '@napi-rs/wasm-runtime': 1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)
+      '@napi-rs/wasm-runtime': 1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)
     optional: true
 
   '@napi-rs/lzma-win32-arm64-msvc@1.5.1':
@@ -1892,7 +1892,7 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.11.2
       '@emnapi/runtime': 1.11.2
-      '@napi-rs/wasm-runtime': 1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)
+      '@napi-rs/wasm-runtime': 1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)
     optional: true
 
   '@napi-rs/tar-win32-arm64-msvc@1.1.1':
@@ -1923,21 +1923,21 @@ snapshots:
       '@napi-rs/tar-win32-ia32-msvc': 1.1.1
       '@napi-rs/tar-win32-x64-msvc': 1.1.1
 
-  '@napi-rs/wasm-runtime@1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)':
+  '@napi-rs/wasm-runtime@1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)':
     dependencies:
       '@emnapi/core': 1.11.2
       '@emnapi/runtime': 1.11.2
       '@tybys/wasm-util': 0.10.4
     optional: true
 
-  '@napi-rs/wasm-runtime@1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
+  '@napi-rs/wasm-runtime@1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
     dependencies:
       '@emnapi/core': 1.9.2
       '@emnapi/runtime': 1.9.2
       '@tybys/wasm-util': 0.10.4
     optional: true
 
-  '@napi-rs/wasm-runtime@1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
+  '@napi-rs/wasm-runtime@1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
     dependencies:
       '@emnapi/core': 2.0.0-beta.2
       '@emnapi/runtime': 2.0.0-beta.2
@@ -1974,7 +1974,7 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.9.2
       '@emnapi/runtime': 1.9.2
-      '@napi-rs/wasm-runtime': 1.2.5(patch_hash=252c3333fd28361e3b08e0e8ef59814274e1c6eef3836a5255d181a04dc14f57)(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
+      '@napi-rs/wasm-runtime': 1.2.5(patch_hash=1e89d3175abdee4d027f4b34b874c50276dcd815e420cc95b5bc98a15f94a9de)(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
     optional: true
 
   '@napi-rs/wasm-tools-win32-arm64-msvc@1.1.0':
