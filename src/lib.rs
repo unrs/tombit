@@ -185,6 +185,14 @@ fn config_input(config: &Config, config_path: Option<PathBuf>) -> Result<ConfigI
 
 fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
     let (base, config_path) = base_config(source_path, options)?;
+    // The binding is built without an HTTP client (see `Cargo.toml`), so tombi's
+    // default schema-catalog URLs would fail on the first fetch. Clear them
+    // before the caller's override, which can still opt back in — local
+    // `$schema` files and `[[schemas]]` keep working either way.
+    let base = merge_override(
+        base,
+        Some(serde_json::json!({ "schema": { "catalog": { "paths": [] } } })),
+    )?;
     let config = merge_override(base, options.override_config.clone())?;
 
     Ok(TombiOptions {
