@@ -34,7 +34,7 @@ module.
 ```js
 import { format, lint } from 'tombit'
 
-const { formatted, diagnostics } = format('a=1\n', '/project/a.toml', {
+const { formatted, diagnostics } = await format('a=1\n', '/project/a.toml', {
   overrideConfig: {
     schema: { enabled: false },
     format: { rules: { 'indent-width': 4 } },
@@ -54,11 +54,13 @@ setting.
 
 ## API
 
-| Function                                    | Notes                        |
-| ------------------------------------------- | ---------------------------- |
-| `version()`                                 | package version              |
-| `format(source, sourcePath, options?)`      | `{ formatted, diagnostics }` |
-| `lint(source, sourcePath, options?)`        | `{ diagnostics }`            |
+| Function                                    | Notes                                  |
+| ------------------------------------------- | -------------------------------------- |
+| `version()`                                 | package version                        |
+| `format(source, sourcePath, options?)`      | `Promise<{ formatted, diagnostics }>`  |
+| `formatSync(source, sourcePath, options?)`  | `{ formatted, diagnostics }`           |
+| `lint(source, sourcePath, options?)`        | `Promise<{ diagnostics }>`             |
+| `lintSync(source, sourcePath, options?)`    | `{ diagnostics }`                      |
 
 `options`:
 
@@ -73,8 +75,8 @@ wants to stay offline passes `overrideConfig: { schema: { enabled: false } }`. T
 (linux armv7/ppc64le/s390x/riscv64/loongarch64, android, ohos, wasm) ship the offline stub and force
 it off, because a fetch there would fail with `No HTTP client feature enabled`.
 
-The calls are synchronous: napi's async executor requires `Send` futures, and tombi's wasm futures
-are deliberately `LocalBoxFuture`.
+`format`/`lint` return Promises and run the work on napi's thread pool, so they never block the
+event loop; `formatSync`/`lintSync` block the calling thread instead.
 
 ## Roadmap
 

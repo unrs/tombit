@@ -3,6 +3,7 @@
 use std::path::{Path, PathBuf};
 
 use napi::bindgen_prelude::*;
+use napi::{Env, Task};
 use napi_derive::napi;
 use serde_json::Value;
 use tombi_config::Config;
@@ -202,19 +203,58 @@ fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
     })
 }
 
-/// Format a TOML document, using tombi's own configuration discovery and the
-/// given override config.
-#[napi]
+/// Format a TOML document asynchronously, using tombi's own configuration
+/// discovery and the given override config.
+#[napi(ts_return_type = "Promise<FormatResult>")]
 pub fn format(
     source: String,
     source_path: String,
     options: Option<Options>,
-) -> Result<FormatResult> {
-    let options = options.unwrap_or_default();
-    let tombi_options = tombi_options(&source_path, &options)?;
+) -> AsyncTask<FormatTask> {
+    AsyncTask::new(FormatTask {
+        source,
+        source_path,
+        options: options.unwrap_or_default(),
+    })
+}
 
-    let result = block_on(tombi_lib::format_async(source, source_path, tombi_options))?
-        .map_err(|error| Error::from_reason(error.to_string()))?;
+/// Format a TOML document synchronously, blocking the calling thread.
+#[napi]
+pub fn format_sync(
+    source: String,
+    source_path: String,
+    options: Option<Options>,
+) -> Result<FormatResult> {
+    format_impl(&source, &source_path, &options.unwrap_or_default())
+}
+
+pub struct FormatTask {
+    source: String,
+    source_path: String,
+    options: Options,
+}
+
+impl Task for FormatTask {
+    type Output = FormatResult;
+    type JsValue = FormatResult;
+
+    fn compute(&mut self) -> Result<Self::Output> {
+        format_impl(&self.source, &self.source_path, &self.options)
+    }
+
+    fn resolve(&mut self, _env: Env, output: Self::Output) -> Result<Self::JsValue> {
+        Ok(output)
+    }
+}
+
+fn format_impl(source: &str, source_path: &str, options: &Options) -> Result<FormatResult> {
+    let tombi_options = tombi_options(source_path, options)?;
+    let result = block_on(tombi_lib::format_async(
+        source.to_owned(),
+        source_path.to_owned(),
+        tombi_options,
+    ))?
+    .map_err(|error| Error::from_reason(error.to_string()))?;
 
     Ok(FormatResult {
         formatted: result.formatted,
@@ -222,15 +262,54 @@ pub fn format(
     })
 }
 
-/// Lint a TOML document, using tombi's own configuration discovery and the given
-/// override config.
-#[napi]
-pub fn lint(source: String, source_path: String, options: Option<Options>) -> Result<LintResult> {
-    let options = options.unwrap_or_default();
-    let tombi_options = tombi_options(&source_path, &options)?;
+/// Lint a TOML document asynchronously, using tombi's own configuration discovery
+/// and the given override config.
+#[napi(ts_return_type = "Promise<LintResult>")]
+pub fn lint(source: String, source_path: String, options: Option<Options>) -> AsyncTask<LintTask> {
+    AsyncTask::new(LintTask {
+        source,
+        source_path,
+        options: options.unwrap_or_default(),
+    })
+}
 
-    let result = block_on(tombi_lib::lint_async(source, source_path, tombi_options))?
-        .map_err(|error| Error::from_reason(error.to_string()))?;
+/// Lint a TOML document synchronously, blocking the calling thread.
+#[napi]
+pub fn lint_sync(
+    source: String,
+    source_path: String,
+    options: Option<Options>,
+) -> Result<LintResult> {
+    lint_impl(&source, &source_path, &options.unwrap_or_default())
+}
+
+pub struct LintTask {
+    source: String,
+    source_path: String,
+    options: Options,
+}
+
+impl Task for LintTask {
+    type Output = LintResult;
+    type JsValue = LintResult;
+
+    fn compute(&mut self) -> Result<Self::Output> {
+        lint_impl(&self.source, &self.source_path, &self.options)
+    }
+
+    fn resolve(&mut self, _env: Env, output: Self::Output) -> Result<Self::JsValue> {
+        Ok(output)
+    }
+}
+
+fn lint_impl(source: &str, source_path: &str, options: &Options) -> Result<LintResult> {
+    let tombi_options = tombi_options(source_path, options)?;
+    let result = block_on(tombi_lib::lint_async(
+        source.to_owned(),
+        source_path.to_owned(),
+        tombi_options,
+    ))?
+    .map_err(|error| Error::from_reason(error.to_string()))?;
 
     Ok(LintResult {
         diagnostics: to_diagnostics(&result.diagnostics),
