@@ -83,8 +83,8 @@ just check        # fmt + clippy + Rust and JS tests
 
 ## Vendoring
 
-tombi lives in `vendor/tombi` as a git submodule pinned to a commit, because its crates are not
-published on crates.io yet. The dependency is split by target:
+tombi lives in `tombi/` at the repository root as a git submodule pinned to a commit, because its
+crates are not published on crates.io yet. The dependency is split by target:
 
 - **native** — `tombi-lib` with the `native` feature: real filesystem and network, so discovery and
   schema catalogs behave like the CLI.
