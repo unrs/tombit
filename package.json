@@ -61,7 +61,8 @@
       "s390x-unknown-linux-gnu",
       "powerpc64le-unknown-linux-musl",
       "riscv64gc-unknown-linux-musl",
-      "loongarch64-unknown-linux-musl"
+      "loongarch64-unknown-linux-musl",
+      "x86_64-pc-windows-gnu"
     ],
     "rootPublisher": "pnpm"
   },

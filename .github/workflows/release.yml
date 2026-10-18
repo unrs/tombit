@@ -109,13 +109,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Not built here: `x86_64-pc-windows-gnu` is rejected by `-x`
-        # (cargo-xwin is MSVC-only). The wasm targets link with emnapi
-        # 2.0.0-beta.2 (`libemnapi-basic-napi-rs.a` / `libemnapi-napi-rs-mt.a`),
-        # but the generated loader crashes on import with
-        # `@napi-rs/wasm-runtime` 1.2.5 (`initWorker` on undefined), so they stay
-        # out until the runtime glue supports emnapi v2. `universal-apple-darwin`
-        # is dropped: both macOS arches are published separately.
+        # Not built here: the wasm targets link with emnapi 2.0.0-beta.2
+        # (`libemnapi-basic-napi-rs.a` / `libemnapi-napi-rs-mt.a`), but the
+        # generated loader crashes on import with `@napi-rs/wasm-runtime` 1.2.5
+        # (`initWorker` on undefined), so they stay out until the runtime glue
+        # supports emnapi v2. `universal-apple-darwin` is dropped: both macOS
+        # arches are published separately.
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
@@ -126,6 +125,13 @@ jobs:
           - os: windows-latest
             target: i686-pc-windows-msvc
             build: pnpm build --features schema
+          - os: ubuntu-latest
+            target: x86_64-pc-windows-gnu
+            build: |-
+              sudo apt-get update &&
+              sudo apt-get install -y gcc-mingw-w64-x86-64 &&
+              export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=x86_64-w64-mingw32-gcc &&
+              pnpm build
 
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
