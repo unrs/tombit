@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  # Temporary: build every target on pull requests without releasing or
-  # publishing. Drop this trigger once the matrix is green.
-  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,7 +21,6 @@ env:
 jobs:
   release:
     name: Version or prepare release
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -99,12 +95,10 @@ jobs:
   # therefore a supported C toolchain. It is enabled on linux/macOS/windows and
   # FreeBSD; the other targets ship the offline stub with the same API.
   #
-  # On pull requests this runs with the release gate bypassed, so a target's
-  # recipe can be debugged before a release exists.
   build:
     name: Build ${{ matrix.target }}
     needs: release
-    if: always() && (github.event_name == 'pull_request' || needs.release.outputs.publish == 'true')
+    if: needs.release.outputs.publish == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -271,7 +265,7 @@ jobs:
   build-freebsd:
     name: Build x86_64-unknown-freebsd
     needs: release
-    if: always() && (github.event_name == 'pull_request' || needs.release.outputs.publish == 'true')
+    if: needs.release.outputs.publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -317,7 +311,7 @@ jobs:
     needs:
       - build
       - build-freebsd
-    if: github.event_name != 'pull_request' && needs.build.result == 'success' && needs.build-freebsd.result == 'success'
+    if: needs.build.result == 'success' && needs.build-freebsd.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
