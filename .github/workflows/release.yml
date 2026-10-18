@@ -154,7 +154,7 @@ jobs:
 
   # npm only lets a trusted publisher be configured for a package that already
   # exists, so the first release needs `0.0.0` placeholders for the platform
-  # packages. See `.changeset/README.md`.
+  # packages. See `docs/releasing.md`.
   publish:
     name: Publish to npm
     needs: build

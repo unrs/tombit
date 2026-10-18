@@ -11,11 +11,11 @@ init:
 
 # Build the native binding in release mode.
 build:
-    pnpm exec napi build --platform --release
+    pnpm napi build --platform --release
 
 # Build the native binding in debug mode.
 build-debug:
-    pnpm exec napi build --platform
+    pnpm napi build --platform
 
 # Run Rust unit tests.
 test-rust:
@@ -43,8 +43,8 @@ check: fmt-check lint test
 
 # Assemble release artifacts into the platform packages.
 artifacts:
-    pnpm exec napi create-npm-dirs
-    pnpm exec napi artifacts
+    pnpm napi create-npm-dirs
+    pnpm napi artifacts
 
 # Remove build outputs and copied native binaries.
 clean:
