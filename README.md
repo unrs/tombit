@@ -4,9 +4,9 @@ Unified toolkit for [tombi][]: TOML **format** and **lint** from Node.js and Web
 tombi's own configuration discovery.
 
 > **Status:** scaffold. `format` and `lint` work on the native target and are covered by tests.
-> Configuration discovery and merging live in Rust; JavaScript only supplies overrides. A `.wasm`
-> build compiles and runs for WASI at the core level, but the napi `wasm32-wasip1-threads` link is
-> not resolved yet.
+> Configuration discovery and merging live in Rust; JavaScript only supplies overrides. Both WASI
+> targets link with emnapi v2, but their generated loader fails on import with the current
+> `@napi-rs/wasm-runtime`, so wasm is not published yet.
 
 ## Why
 
@@ -67,10 +67,11 @@ setting.
 | `config`         | `false \| string \| { content, path }`; replaces discovery (`false` keeps the defaults)        |
 | `overrideConfig` | merged over the base config                                                                   |
 
-Schema resolution is compiled in only where the target can build `ring` (linux, macOS, Windows and
-FreeBSD); those builds follow tombi's default (on), and a formatter that wants to stay offline passes
-`overrideConfig: { schema: { enabled: false } }`. Builds without the client force it off, because a
-fetch there would fail with `No HTTP client feature enabled`.
+Schema resolution is compiled in only where the target can build `ring`: linux x64/arm64 (gnu and
+musl), macOS, Windows and FreeBSD. Those builds follow tombi's default (on), and a formatter that
+wants to stay offline passes `overrideConfig: { schema: { enabled: false } }`. The other targets
+(linux armv7/ppc64le/s390x/riscv64/loongarch64, android, ohos, wasm) ship the offline stub and force
+it off, because a fetch there would fail with `No HTTP client feature enabled`.
 
 The calls are synchronous: napi's async executor requires `Send` futures, and tombi's wasm futures
 are deliberately `LocalBoxFuture`.
