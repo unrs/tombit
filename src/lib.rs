@@ -185,13 +185,13 @@ fn config_input(config: &Config, config_path: Option<PathBuf>) -> Result<ConfigI
 
 fn tombi_options(source_path: &str, options: &Options) -> Result<TombiOptions> {
     let (base, config_path) = base_config(source_path, options)?;
-    // The binding is built without an HTTP client (see `Cargo.toml`), so tombi's
-    // default schema-catalog URLs would fail on the first fetch. Clear them
-    // before the caller's override, which can still opt back in — local
-    // `$schema` files and `[[schemas]]` keep working either way.
+    // The binding is built without an HTTP client (see `Cargo.toml`), so schema
+    // resolution would fail on the first catalog fetch. Disable it in the base
+    // config; `enabled = true` survives the round-trip as serde's default, so a
+    // caller can still opt in (and gets a clear fetch error if it does).
     let base = merge_override(
         base,
-        Some(serde_json::json!({ "schema": { "catalog": { "paths": [] } } })),
+        Some(serde_json::json!({ "schema": { "enabled": false } })),
     )?;
     let config = merge_override(base, options.override_config.clone())?;
 
