@@ -3,15 +3,18 @@
   "version": "0.1.3",
   "description": "Unified toolkit for tombi: TOML format and lint from Node.js and WebAssembly",
   "main": "index.js",
+  "browser": "browser.js",
   "types": "index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts",
+      "browser": "./browser.js",
       "default": "./index.js"
     },
     "./package.json": "./package.json"
   },
   "files": [
+    "browser.js",
     "index.js",
     "index.d.ts"
   ],
@@ -62,10 +65,14 @@
       "powerpc64le-unknown-linux-musl",
       "riscv64gc-unknown-linux-musl",
       "loongarch64-unknown-linux-musl",
-      "wasm32-wasip1",
       "wasm32-wasip1-threads"
     ],
-    "rootPublisher": "pnpm"
+    "rootPublisher": "pnpm",
+    "wasm": {
+      "browser": {
+        "fs": true
+      }
+    }
   },
   "scripts": {
     "build": "napi build --platform --release",
@@ -78,7 +85,9 @@
     "lint": "cargo clippy --all-targets -- -D warnings",
     "test:rust": "cargo test",
     "test:watch": "pnpm run build:debug && vitest",
-    "version": "changeset version && cargo set-version --workspace \"$(node -p 'require(\"./package.json\").version')\""
+    "version": "changeset version && cargo set-version --workspace \"$(node -p 'require(\"./package.json\").version')\"",
+    "postbuild": "node scripts/patch.mjs",
+    "postbuild:debug": "node scripts/patch.mjs"
   },
   "publishConfig": {
     "access": "public",
@@ -95,5 +104,8 @@
     "lefthook": "^2.2.2",
     "vitest": "^5.0.5"
   },
-  "packageManager": "pnpm@12.14.0"
+  "packageManager": "pnpm@12.14.0",
+  "dependencies": {
+    "napi-postinstall": "^0.3.5"
+  }
 }
