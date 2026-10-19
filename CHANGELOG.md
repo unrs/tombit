@@ -1,5 +1,14 @@
 # tombit
 
+## 0.1.5
+
+### Patch Changes
+
+- [#13](https://github.com/unrs/tombit/pull/13) [`f1a8a97`](https://github.com/unrs/tombit/commit/f1a8a9782ebadd81be07081b396006c062bdcd6d) Thanks [@JounQin](https://github.com/JounQin)! - Fix the WebContainer fallback throwing `ERR_NAPI_BINDING_TARGET_CONFLICT`.
+  
+  The fallback now adopts the WASI binding's `__napiBindingTarget` instead of
+  stamping it with the root loader's default `'native'` target.
+
 ## 0.1.4
 
 ### Patch Changes
