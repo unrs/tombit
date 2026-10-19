@@ -106,9 +106,8 @@ describe('tombit', () => {
     ).rejects.toThrow(/nosuchkey/)
   })
 
-  // Known gap (tombi-toml/tombi#2329): `[[overrides]]` rules currently lose to
-  // the base rules, so these assert the base indentation. Switch them to six
-  // spaces once the upstream fix (tombi-toml/tombi#2330) is vendored.
+  // `[[overrides]]` rules take precedence over the base rules
+  // (tombi-toml/tombi#2329, fixed upstream in tombi-toml/tombi#2330).
   it('formats a discovered config with overrides', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tombit-'))
     fs.writeFileSync(
@@ -120,7 +119,7 @@ describe('tombit', () => {
       overrideConfig: OFFLINE,
     })
 
-    expect(result.formatted).toBe('[t]\n    key = 1\n')
+    expect(result.formatted).toBe('[t]\n      key = 1\n')
   })
 
   it('formats a discovered config with overrides synchronously', () => {
@@ -132,7 +131,7 @@ describe('tombit', () => {
 
     const result = formatSync('[t]\nkey = 1\n', path.join(dir, 'a.toml'))
 
-    expect(result.formatted).toBe('[t]\n    key = 1\n')
+    expect(result.formatted).toBe('[t]\n      key = 1\n')
   })
 
   it('reports the diagnostic range when formatting fails', async () => {
