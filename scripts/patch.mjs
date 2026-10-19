@@ -19,6 +19,9 @@ if (!nativeBinding && globalThis.process?.versions?.["webcontainer"]) {
       require.resolve('./package.json'),
       true,
     )
+    if (typeof nativeBinding.__napiBindingTarget === 'string') {
+      __napiLoadedBindingTarget = nativeBinding.__napiBindingTarget
+    }
   } catch (err) {
     loadErrors.push(err)
   }
