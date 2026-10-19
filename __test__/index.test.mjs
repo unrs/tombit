@@ -106,6 +106,9 @@ describe('tombit', () => {
     ).rejects.toThrow(/nosuchkey/)
   })
 
+  // Known gap (tombi-toml/tombi#2329): `[[overrides]]` rules currently lose to
+  // the base rules, so these assert the base indentation. Switch them to six
+  // spaces once the upstream fix (tombi-toml/tombi#2330) is vendored.
   it('formats a discovered config with overrides', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tombit-'))
     fs.writeFileSync(
