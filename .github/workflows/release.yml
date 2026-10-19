@@ -256,6 +256,7 @@ jobs:
           name: js-binding
           path: |
             browser.js
+            fallback-package.json
             index.js
             index.d.ts
           if-no-files-found: error
