@@ -48,13 +48,31 @@ pub fn version() -> String {
     env!("CARGO_PKG_VERSION").to_owned()
 }
 
+/// A zero-based position in a TOML document.
+#[napi(object)]
+pub struct Position {
+    pub line: u32,
+    pub column: u32,
+}
+
+/// A range in a TOML document, with zero-based line and column numbers.
+#[napi(object)]
+pub struct Range {
+    pub start: Position,
+    pub end: Position,
+}
+
 /// A diagnostic reported by tombi.
 #[napi(object)]
 pub struct Diagnostic {
     /// `error` or `warning`.
+    #[napi(ts_type = "\"error\" | \"warning\"")]
     pub level: String,
     pub code: String,
     pub message: String,
+    pub range: Range,
+    /// The file the diagnostic points into, when tombi knows it.
+    pub source_file: Either<String, Null>,
 }
 
 /// The result of formatting a TOML document.
@@ -74,11 +92,28 @@ pub struct LintResult {
 fn to_diagnostics(diagnostics: &[tombi_lib::Diagnostic]) -> Vec<Diagnostic> {
     diagnostics
         .iter()
-        .map(|diagnostic| Diagnostic {
-            // `Level`'s `Display` adds ANSI colour; `as_str` is the plain name.
-            level: diagnostic.level().as_str().to_lowercase(),
-            code: diagnostic.code().to_owned(),
-            message: diagnostic.message().to_owned(),
+        .map(|diagnostic| {
+            let range = diagnostic.range();
+            Diagnostic {
+                // `Level`'s `Display` adds ANSI colour; `as_str` is the plain name.
+                level: diagnostic.level().as_str().to_lowercase(),
+                code: diagnostic.code().to_owned(),
+                message: diagnostic.message().to_owned(),
+                range: Range {
+                    start: Position {
+                        line: range.start.line,
+                        column: range.start.column,
+                    },
+                    end: Position {
+                        line: range.end.line,
+                        column: range.end.column,
+                    },
+                },
+                source_file: match diagnostic.source_file() {
+                    Some(path) => Either::A(path.to_string_lossy().into_owned()),
+                    None => Either::B(Null),
+                },
+            }
         })
         .collect()
 }
