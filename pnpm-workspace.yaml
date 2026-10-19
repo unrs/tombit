@@ -1,2 +1,4 @@
 allowBuilds:
   lefthook: true
+minimumReleaseAgeExclude:
+  - napi-postinstall
