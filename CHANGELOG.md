@@ -1,5 +1,14 @@
 # tombit
 
+## 0.1.3
+
+### Patch Changes
+
+- [#9](https://github.com/unrs/tombit/pull/9) [`c1bce0b`](https://github.com/unrs/tombit/commit/c1bce0bd26d83389df43b3d23bba8b78757d864f) Thanks [@JounQin](https://github.com/JounQin)! - Apply `[[overrides]]` formatting and linting rules over the base rules.
+  
+  Vendors tombi-toml/tombi#2330: a matching override was parsed and matched, but
+  its `format.rules`/`lint.rules` previously lost to the base rules.
+
 ## 0.1.2
 
 ### Patch Changes
