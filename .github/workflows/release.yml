@@ -191,9 +191,6 @@ jobs:
             build: pnpm build --features schema
 
           - os: ubuntu-latest
-            target: wasm32-wasip1
-            build: pnpm build:debug --release
-          - os: ubuntu-latest
             target: wasm32-wasip1-threads
             build: pnpm build:debug --release
 
@@ -258,6 +255,7 @@ jobs:
         with:
           name: js-binding
           path: |
+            browser.js
             index.js
             index.d.ts
           if-no-files-found: error

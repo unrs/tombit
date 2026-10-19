@@ -3,6 +3,7 @@
   "version": "0.1.3",
   "description": "Unified toolkit for tombi: TOML format and lint from Node.js and WebAssembly",
   "main": "index.js",
+  "browser": "browser.js",
   "types": "index.d.ts",
   "exports": {
     ".": {
@@ -12,6 +13,7 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "browser.js",
     "index.js",
     "index.d.ts"
   ],
@@ -62,10 +64,14 @@
       "powerpc64le-unknown-linux-musl",
       "riscv64gc-unknown-linux-musl",
       "loongarch64-unknown-linux-musl",
-      "wasm32-wasip1",
       "wasm32-wasip1-threads"
     ],
-    "rootPublisher": "pnpm"
+    "rootPublisher": "pnpm",
+    "wasm": {
+      "browser": {
+        "fs": true
+      }
+    }
   },
   "scripts": {
     "build": "napi build --platform --release",
