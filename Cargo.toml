@@ -56,5 +56,6 @@ tombi-lib = { path = "tombi/rust/tombi-lib", default-features = false }
 napi-build = "2.6"
 
 [profile.release]
-lto = "thin"
+lto = "fat"
+codegen-units = 1
 strip = "symbols"
