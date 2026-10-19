@@ -1,5 +1,11 @@
 # tombit
 
+## 0.1.1
+
+### Patch Changes
+
+- [#3](https://github.com/unrs/tombit/pull/3) [`a12c974`](https://github.com/unrs/tombit/commit/a12c9748cf67ff0926933456828e6a459a5b542b) Thanks [@JounQin](https://github.com/JounQin)! - Expose `range` and `sourceFile` on diagnostics, matching `@tombi-toml/lib` so callers can render code frames and point at the offending source.
+
 ## 0.1.0
 
 ### Minor Changes
