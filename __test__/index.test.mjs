@@ -106,6 +106,21 @@ describe('tombit', () => {
     ).rejects.toThrow(/nosuchkey/)
   })
 
+  it('reports the diagnostic range when formatting fails', async () => {
+    const result = await format('[invalid\nkey = ', 'a.toml', {
+      overrideConfig: OFFLINE,
+    })
+
+    expect(result.formatted).toBeUndefined()
+
+    const [diagnostic] = result.diagnostics
+    expect(diagnostic.level).toBe('error')
+    expect(diagnostic.code).toBe('expected-bracket-end')
+    expect(diagnostic.range.start).toEqual({ line: 0, column: 8 })
+    expect(diagnostic.range.end.line).toBeGreaterThanOrEqual(0)
+    expect(diagnostic.sourceFile).toBeNull()
+  })
+
   it('reports lint diagnostics', async () => {
     const result = await lint('invalid = =\n', 'a.toml', {
       overrideConfig: OFFLINE,
@@ -113,6 +128,8 @@ describe('tombit', () => {
 
     expect(result.diagnostics.length).toBeGreaterThan(0)
     expect(result.diagnostics[0].level).toBe('error')
+    expect(result.diagnostics[0].range.start.line).toBe(0)
+    expect(result.diagnostics[0].sourceFile).toBeNull()
   })
 
   it('lints synchronously', () => {
