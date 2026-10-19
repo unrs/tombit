@@ -342,12 +342,12 @@ fn base_config(source_path: &str, options: &Options) -> Result<(Config, Option<P
 /// back to text. Keeping the config's path matters: `format_async` hands it to
 /// `tombi_glob`, so the config's own `[[overrides]]` still match the file.
 fn config_input(config: &Config, config_path: Option<PathBuf>) -> Result<ConfigInput> {
-    let offline = serde_tombi::config::from_str(OFFLINE_CONFIG, Path::new(OFFLINE_CONFIG_PATH))
-        .map_err(|error| Error::from_reason(error.to_string()))?;
-
-    let serializer = serde_tombi::Serializer::builder().config(&offline).build();
-    let content = block_on(serializer.to_string_async(config))?
-        .map_err(|error| Error::from_reason(error.to_string()))?;
+    // Serialize the config with a plain TOML serializer: tombi only needs valid
+    // TOML here, and `serde_tombi`'s writer currently produces invalid TOML for
+    // configurations with `[[overrides]]`.
+    let content = toml_edit::ser::to_string(config).map_err(|error| {
+        Error::from_reason(format!("failed to serialize the tombi config: {error}"))
+    })?;
 
     Ok(match config_path {
         Some(path) => ConfigInput::File { content, path },

@@ -106,6 +106,35 @@ describe('tombit', () => {
     ).rejects.toThrow(/nosuchkey/)
   })
 
+  // Known gap (tombi-toml/tombi#2329): `[[overrides]]` rules currently lose to
+  // the base rules, so these assert the base indentation. Switch them to six
+  // spaces once the upstream fix (tombi-toml/tombi#2330) is vendored.
+  it('formats a discovered config with overrides', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tombit-'))
+    fs.writeFileSync(
+      path.join(dir, 'tombi.toml'),
+      '[format.rules]\nindent-table-key-value-pairs = true\nindent-width = 4\n\n[[overrides]]\nfiles.include = ["**/*.toml"]\n\n[overrides.format.rules]\nindent-width = 6\n',
+    )
+
+    const result = await format('[t]\nkey = 1\n', path.join(dir, 'a.toml'), {
+      overrideConfig: OFFLINE,
+    })
+
+    expect(result.formatted).toBe('[t]\n    key = 1\n')
+  })
+
+  it('formats a discovered config with overrides synchronously', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tombit-'))
+    fs.writeFileSync(
+      path.join(dir, 'tombi.toml'),
+      '[format.rules]\nindent-table-key-value-pairs = true\nindent-width = 4\n\n[[overrides]]\nfiles.include = ["**/*.toml"]\n\n[overrides.format.rules]\nindent-width = 6\n',
+    )
+
+    const result = formatSync('[t]\nkey = 1\n', path.join(dir, 'a.toml'))
+
+    expect(result.formatted).toBe('[t]\n    key = 1\n')
+  })
+
   it('reports the diagnostic range when formatting fails', async () => {
     const result = await format('[invalid\nkey = ', 'a.toml', {
       overrideConfig: OFFLINE,
