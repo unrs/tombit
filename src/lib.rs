@@ -95,8 +95,14 @@ fn to_diagnostics(diagnostics: &[tombi_lib::Diagnostic]) -> Vec<Diagnostic> {
         .map(|diagnostic| {
             let range = diagnostic.range();
             Diagnostic {
-                // `Level`'s `Display` adds ANSI colour; `as_str` is the plain name.
-                level: diagnostic.level().as_str().to_lowercase(),
+                // Mirror `tombi-lib-node`: `Level` only has ERROR and WARNING,
+                // and `as_str` returns the capitalised, display oriented name.
+                level: if diagnostic.is_error() {
+                    "error"
+                } else {
+                    "warning"
+                }
+                .to_owned(),
                 code: diagnostic.code().to_owned(),
                 message: diagnostic.message().to_owned(),
                 range: Range {
