@@ -1,5 +1,16 @@
 {
   "extends": [
     "github>1stG/configs"
+  ],
+  "packageRules": [
+    {
+      "description": "@napi-rs/wasm-runtime 1.2.5 still bundles the 2.0.0-alpha emnapi plugin API.",
+      "matchPackageNames": [
+        "@emnapi/core",
+        "@emnapi/runtime",
+        "emnapi"
+      ],
+      "allowedVersions": "<2.0.0-beta.1"
+    }
   ]
 }
