@@ -12,6 +12,13 @@
       ],
       "followTag": "alpha",
       "allowedVersions": "<2.0.0-beta.1"
+    },
+    {
+      "description": "1.2.5 is the last @napi-rs/wasm-runtime built with the emnapi alpha plugin. The next release follows emnapi beta.2; bump it together with emnapi.",
+      "matchPackageNames": [
+        "@napi-rs/wasm-runtime"
+      ],
+      "allowedVersions": "<=1.2.5"
     }
   ]
 }
