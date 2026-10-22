@@ -19,10 +19,11 @@ Upstream is tracking the fallback in [napi-rs/napi-rs#3621](https://github.com/n
 Until a runtime built against beta ships:
 
 - keep `@emnapi/core`, `@emnapi/runtime`, and `emnapi` on the `alpha` npm dist-tag;
-- hold `@napi-rs/wasm-runtime` updates for approval in the Dependency Dashboard, so Renovate still
-  surfaces them but does not create a branch until the emnapi generation is checked.
+- put `@napi-rs/wasm-runtime` and the emnapi packages in one `napi-rs wasm toolchain` group, with
+  updates held for approval in the Dependency Dashboard. Grouping keeps them in one review unit, but
+  the WASI smoke test is what rejects an incompatible pair.
 
 `pnpm test:wasi` loads the generated WASI loader and formats a small document. CI runs it in the
 `wasi` job, and the release workflow runs it for the `wasm32-wasip1-threads` build before uploading
-the artifact. To move to beta, bump the four packages together, approve the runtime update from the
+the artifact. To move to beta, bump the four packages together, approve the grouped update from the
 Dependency Dashboard, and rerun the smoke test.
