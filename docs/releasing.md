@@ -21,11 +21,10 @@ Until a runtime built against beta ships:
 - keep `@emnapi/core`, `@emnapi/runtime`, and `emnapi` on the `alpha` npm dist-tag
   (`followTag: "alpha"`); a tag move is surfaced for approval instead of being silently filtered by a
   version cap;
-- put `@napi-rs/wasm-runtime` and the emnapi packages in one `napi-rs wasm toolchain` group, with
-  updates held for approval in the Dependency Dashboard. Grouping keeps them in one review unit, but
-  the WASI smoke test is what rejects an incompatible pair.
+- hold `@napi-rs/wasm-runtime` updates for approval in the Dependency Dashboard; it follows its own
+  release channel, and the WASI smoke test checks the pairing with the alpha line.
 
 `pnpm test:wasi` loads the generated WASI loader and formats a small document. CI runs it in the
 `wasi` job, and the release workflow runs it for the `wasm32-wasip1-threads` build before uploading
-the artifact. To move to beta, bump the four packages together, approve the grouped update from the
+the artifact. To move to beta, bump the four packages together, approve the runtime update from the
 Dependency Dashboard, and rerun the smoke test.

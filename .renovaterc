@@ -4,14 +4,10 @@
   ],
   "packageRules": [
     {
-      "description": "Review the napi-rs WASI runtime and emnapi as one unit; the runtime bundles the emnapi plugin at build time.",
+      "description": "Review @napi-rs/wasm-runtime updates from the Dependency Dashboard: the runtime bundles the emnapi plugin at build time and follows its own release channel.",
       "matchPackageNames": [
-        "@napi-rs/wasm-runtime",
-        "@emnapi/core",
-        "@emnapi/runtime",
-        "emnapi"
+        "@napi-rs/wasm-runtime"
       ],
-      "groupName": "napi-rs wasm toolchain",
       "dependencyDashboardApproval": true
     },
     {
