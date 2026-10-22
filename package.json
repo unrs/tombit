@@ -84,6 +84,7 @@
     "fmt:check": "cargo fmt --check",
     "lint": "cargo clippy --all-targets -- -D warnings",
     "test:rust": "cargo test",
+    "test:wasi": "node scripts/test-wasi.mjs",
     "test:watch": "pnpm run build:debug && vitest",
     "version": "changeset version && cargo set-version --workspace \"$(node -p 'require(\"./package.json\").version')\"",
     "postbuild": "napi-patch",

@@ -236,6 +236,10 @@ jobs:
         run: ${{ matrix.build }} --target ${{ matrix.target }}
         shell: bash
 
+      - name: Smoke-test the WASI loader
+        if: matrix.target == 'wasm32-wasip1-threads'
+        run: pnpm run test:wasi
+
       - name: Upload binding
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

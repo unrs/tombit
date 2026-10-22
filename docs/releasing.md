@@ -9,3 +9,21 @@ package on npmjs.com before the first automated release.
 
 If a release stops after publishing some of the platform packages, do not re-run it for the same
 version: npm rejects publishing over an existing version, so bump the version and release again.
+
+## WASI dependency compatibility
+
+`@napi-rs/wasm-runtime` bundles the emnapi async-work and TSFN plugins into its own `dist` at build
+time. `1.2.5` bundles the `2.0.0-alpha` plugin, which writes `emnapi_shared.napiModule`; emnapi
+`2.0.0-beta` renamed that internal property to `addonModule`, so the two generations cannot be mixed.
+Upstream is tracking the fallback in [napi-rs/napi-rs#3621](https://github.com/napi-rs/napi-rs/issues/3621).
+Until a runtime built against beta ships:
+
+- keep `@napi-rs/wasm-runtime` and the emnapi packages in one `napi-rs wasm toolchain` group, with
+  updates held for approval in the Dependency Dashboard;
+- do not pin emnapi to the alpha tag: a future runtime release may require the beta generation, and
+  the group should be able to move both together;
+- use the WASI smoke test as the compatibility gate; if the pair is incompatible, the PR fails.
+
+`pnpm test:wasi` loads the generated WASI loader and formats a small document. CI runs it in the
+`wasi` job, and the release workflow runs it for the `wasm32-wasip1-threads` build before uploading
+the artifact. To move to beta, approve the grouped update and rerun the smoke test.
