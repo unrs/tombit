@@ -18,7 +18,9 @@ time. `1.2.5` bundles the `2.0.0-alpha` plugin, which writes `emnapi_shared.napi
 Upstream is tracking the fallback in [napi-rs/napi-rs#3621](https://github.com/napi-rs/napi-rs/issues/3621).
 Until a runtime built against beta ships:
 
-- keep `@emnapi/core`, `@emnapi/runtime`, and `emnapi` on the `alpha` npm dist-tag;
+- keep `@emnapi/core`, `@emnapi/runtime`, and `emnapi` on the `alpha` npm dist-tag
+  (`followTag: "alpha"`); a tag move is surfaced for approval instead of being silently filtered by a
+  version cap;
 - put `@napi-rs/wasm-runtime` and the emnapi packages in one `napi-rs wasm toolchain` group, with
   updates held for approval in the Dependency Dashboard. Grouping keeps them in one review unit, but
   the WASI smoke test is what rejects an incompatible pair.

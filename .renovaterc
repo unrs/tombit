@@ -21,8 +21,7 @@
         "@emnapi/runtime",
         "emnapi"
       ],
-      "followTag": "alpha",
-      "allowedVersions": "<2.0.0-beta.1"
+      "followTag": "alpha"
     }
   ]
 }
