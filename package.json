@@ -96,11 +96,11 @@
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
-    "@emnapi/core": "2.0.0-alpha.6",
-    "@emnapi/runtime": "2.0.0-alpha.6",
+    "@emnapi/core": "2.0.0-beta.2",
+    "@emnapi/runtime": "2.0.0-beta.2",
     "@napi-rs/cli": "^3.10.8",
     "@napi-rs/wasm-runtime": "^1.2.5",
-    "emnapi": "2.0.0-alpha.6",
+    "emnapi": "2.0.0-beta.2",
     "lefthook": "^2.2.2",
     "vitest": "^5.0.5"
   },
