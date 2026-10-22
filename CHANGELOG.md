@@ -1,5 +1,16 @@
 # tombit
 
+## 0.1.7
+
+### Patch Changes
+
+- [#21](https://github.com/unrs/tombit/pull/21) [`5a520e0`](https://github.com/unrs/tombit/commit/5a520e069aecc2a895f554d231f6eb9d79f67a87) Thanks [@git-credential-broker](https://github.com/apps/git-credential-broker)! - Pin the WASI binding's emnapi dependencies to `2.0.0-alpha.6`.
+  
+  `@napi-rs/wasm-runtime` 1.2.5 bundles the `2.0.0-alpha` emnapi plugin API. The
+  `2.0.0-beta` release no longer exposes `emnapi_shared.napiModule`, so loading the
+  WASI entry threw `TypeError: Cannot set properties of undefined (setting
+  'initWorker')`. Keep Renovate on the alpha line until the runtime supports beta.
+
 ## 0.1.6
 
 ### Patch Changes
