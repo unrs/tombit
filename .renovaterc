@@ -1,5 +1,17 @@
 {
   "extends": [
     "github>1stG/configs"
+  ],
+  "packageRules": [
+    {
+      "description": "Follow the emnapi alpha channel: @napi-rs/wasm-runtime 1.2.5 bundles the 2.0.0-alpha plugin and breaks on the beta rename.",
+      "matchPackageNames": [
+        "@emnapi/core",
+        "@emnapi/runtime",
+        "emnapi"
+      ],
+      "followTag": "alpha",
+      "allowedVersions": "<2.0.0-beta.1"
+    }
   ]
 }
