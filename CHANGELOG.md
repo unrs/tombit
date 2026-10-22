@@ -1,5 +1,11 @@
 # tombit
 
+## 0.1.6
+
+### Patch Changes
+
+- [#15](https://github.com/unrs/tombit/pull/15) [`7ad30fc`](https://github.com/unrs/tombit/commit/7ad30fcf3607a86d8ce62d8f7669dc0879af05b5) Thanks [@JounQin](https://github.com/JounQin)! - Use `napi-patch` to add the all-platform runtime fallback to the generated loader.
+
 ## 0.1.5
 
 ### Patch Changes

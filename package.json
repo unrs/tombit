@@ -1,6 +1,6 @@
 {
   "name": "tombit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Unified toolkit for tombi: TOML format and lint from Node.js and WebAssembly",
   "main": "index.js",
   "browser": "browser.js",
